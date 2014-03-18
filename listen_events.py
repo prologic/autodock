@@ -4,6 +4,7 @@ from __future__ import print_function
 
 
 import sys
+from json import loads
 from threading import Thread
 
 
@@ -65,7 +66,8 @@ class DockerEventManager(Thread):
         self.client = Client(self.url)
 
     def run(self):
-        for event in self.client.events():
+        for payload in self.client.events():
+            event = loads(payload)
             status = event.pop("status")
             docker_event = DOCKER_EVENTS.get(status)
             if docker_event is not None:
