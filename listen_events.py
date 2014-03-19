@@ -15,6 +15,9 @@ from circuits import handler, Event, Component
 from circuits.web import Server, Controller, Logger
 
 
+from node import Node
+
+
 class docker_event(Event):
     """Docker Event"""
 
@@ -89,11 +92,28 @@ class DockerEventLogger(Component):
             print(repr(event))
 
 
+class EventBroadcaster(Component):
+
+    def init(self, host="127.0.0.1", port=1338):
+        self.host = host
+        self.port = port
+
+        self.node = Node(self.host, self.port).register(self)
+
+    @handler("*", channel="docker")
+    def log_docker_event(self, event, *args, **kwargs):
+        if isinstance(event, docker_event):
+            print("Broadcasting:")
+            print(" {0:s}".format(repr(event)))
+            self.node.broadcast(event, self.port)
+
+
 class App(Component):
 
     def init(self, url):
         DockerEventManager(self, url).start()
         DockerEventLogger().register(self)
+        EventBroadcaster().register(self)
 
 
 class Root(Controller):
@@ -108,8 +128,8 @@ def main():
     Logger().register(app)
     Root().register(app)
 
-    #from circuits import Debugger
-    #Debugger().register(app)
+    from circuits import Debugger
+    Debugger().register(app)
 
     app.run()
 
