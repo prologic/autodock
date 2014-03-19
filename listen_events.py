@@ -73,7 +73,7 @@ class DockerEventManager(Thread):
             if docker_event is not None:
                 self.manager.fire(docker_event(**event), "docker")
             else:
-                print("WARNING: Unknown Docker Event <{0:s}({1:s})>".format(status, repr(event)), file=sys.tderr)
+                print("WARNING: Unknown Docker Event <{0:s}({1:s})>".format(status, repr(event)), file=sys.stderr)
 
     def stop(self):
         self.client.close()
