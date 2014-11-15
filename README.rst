@@ -27,11 +27,11 @@ Example Usage #1 -- Logging Docker Events
 
 Start the daemon::
     
-    $ docker run -d --name autodock prologic/autodock
+    $ docker run -d -v /var/run/docker.sock:/var/run/docker.sock --name autodock:autodock prologic/autodock
 
 Link and start an autodock plugin::
     
-    $ docker run -d --link autodock prologic/autodock-logger
+    $ docker run -i -t --link autodock prologic/autodock-logger
 
 Now whenever you start a new container autodock will listen for Docker events.
 The ``autodock-logger`` plugin will log all Docker Events received by autodock.
