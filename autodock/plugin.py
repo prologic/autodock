@@ -19,8 +19,8 @@ from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from circuits import Component, Debugger
 
 
-from autodock.node import hello, Node
-from autodock.utils import parse_bind
+from .node import hello, Node
+from .utils import parse_bind
 
 
 def parse_args(parse=True):
@@ -77,6 +77,12 @@ class Plugin(Component):
         Override this in a subclass to receiver the created event
         """
 
+    def container_destroyed(self, event, **data):
+        """Container destroyed Event
+
+        Override this in a subclass to receiver the destroyed event
+        """
+
     def container_started(self, event, **data):
         """Container started Event
 
@@ -89,20 +95,50 @@ class Plugin(Component):
         Override this in a subclass to receiver the stopped event
         """
 
-    def container_died(self, event, **data):
-        """Container died Event
-
-        Override this in a subclass to receiver the died event
-        """
-
     def container_killed(self, event, **data):
         """Container killed Event
 
         Override this in a subclass to receiver the killed event
         """
 
-    def container_destroyed(self, event, **data):
-        """Container destroyed Event
+    def container_died(self, event, **data):
+        """Container died Event
 
-        Override this in a subclass to receiver the destroyed event
+        Override this in a subclass to receiver the died event
+        """
+
+    def container_exported(self, event, **data):
+        """Container exported Event
+
+        Override this in a subclass to receiver the exported event
+        """
+
+    def container_paused(self, event, **data):
+        """Container paused Event
+
+        Override this in a subclass to receiver the paused event
+        """
+
+    def container_restarted(self, event, **data):
+        """Container restarted Event
+
+        Override this in a subclass to receiver the restarted event
+        """
+
+    def container_unpaused(self, event, **data):
+        """Container unpaused Event
+
+        Override this in a subclass to receiver the unpaused event
+        """
+
+    def image_untagged(self, event, **data):
+        """Image untagged Event
+
+        Override this in a subclass to receiver the untagged event
+        """
+
+    def image_deleted(self, event, **data):
+        """Image deleted Event
+
+        Override this in a subclass to receiver the untagged event
         """
