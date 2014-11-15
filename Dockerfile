@@ -1,4 +1,4 @@
-FROM crux/python
+FROM crux/python:onbuild
 
 EXPOSE 1338/udp
 
