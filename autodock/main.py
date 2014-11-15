@@ -82,6 +82,9 @@ class App(Component):
         DockerEventManager(self, args.url).start()
         EventBroadcaster(*bind).register(self)
 
+    def signal(self, *args):
+        raise SystemExit(0)
+
 
 def parse_args():
     parser = ArgumentParser(
