@@ -37,6 +37,30 @@ class container_died(docker_event):
     """Container Died Event"""
 
 
+class container_exported(docker_event):
+    """Container Exported Event"""
+
+
+class container_paused(docker_event):
+    """Container Paused Event"""
+
+
+class container_restarted(docker_event):
+    """Container Restarted Event"""
+
+
+class container_unpaused(docker_event):
+    """Container Unpaused Event"""
+
+
+class image_untagged(docker_event):
+    """Image Untagged Event"""
+
+
+class image_deleted(docker_event):
+    """Image Delete Event"""
+
+
 DOCKER_EVENTS = {
     u"create": container_created,
     u"destroy": container_destroyed,
@@ -44,4 +68,10 @@ DOCKER_EVENTS = {
     u"stop": container_stopped,
     u"kill": container_killed,
     u"die": container_died,
+    "export": container_exported,
+    "pause": container_paused,
+    "restart": container_restarted,
+    "unpause": container_unpaused,
+    "untag": image_untagged,
+    "delete": image_deleted,
 }
