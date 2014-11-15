@@ -1,2 +1,2 @@
+circuits
 docker-py
--e hg+https://bitbucket.org/circuits/circuits#egg=circuits

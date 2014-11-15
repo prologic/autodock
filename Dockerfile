@@ -1,10 +1,6 @@
-# Docker Image for autodock
-#
-# VERSION: 0.1
+FROM crux/python
 
-FROM prologic/crux-python
-MAINTAINER James Mills <prologic@shortcircuitnet.au>
+EXPOSE 1338/udp
 
-ADD . /
-
-CMD ["/start"]
+ENTRYPOINT ["autodock"]
+CMD [""]
