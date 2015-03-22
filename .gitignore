@@ -1,6 +1,5 @@
-syntax: glob
-
+*~
 dist
-*.pyc
 build
+*.py[co]
 *.egg-info
