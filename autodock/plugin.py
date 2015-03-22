@@ -13,6 +13,7 @@ from __future__ import print_function
 
 
 from os import environ
+from inspect import getmodule
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 
@@ -23,9 +24,9 @@ from .node import hello, Node
 from .utils import parse_bind
 
 
-def parse_args(parse=True):
+def parse_args(parse=True, description=None):
     parser = ArgumentParser(
-        description=__doc__,
+        description=(description or ""),
         formatter_class=ArgumentDefaultsHelpFormatter
     )
 
@@ -53,11 +54,14 @@ def parse_args(parse=True):
 class Plugin(Component):
 
     def init(self, parse_args_cb=None):
+        # Get description from the first line of the plugin's __doc__
+        description = getattr(getmodule(self), "__doc__", "")
+
         # Allow ArgumentsParser to be extended.
         if parse_args_cb is not None:
-            self.args = parse_args_cb(parse_args(False)).parse_args()
+            self.args = parse_args_cb(parse_args(False, description)).parse_args()
         else:
-            self.args = parse_args()
+            self.args = parse_args(description=description)
 
         self.bind = parse_bind(self.args.bind)
         self.url = parse_bind(self.args.url)
