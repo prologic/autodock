@@ -6,6 +6,13 @@ from setuptools import setup, find_packages
 from autodock.version import version
 
 
+def parse_requirements(filename):
+    with open(filename, "r") as f:
+        for line in f:
+            if line and line[0] != "#":
+                yield line.strip()
+
+
 setup(
     name="autodock",
     version=version,
@@ -34,10 +41,7 @@ setup(
     keywords="docker automation daemon",
     platforms="POSIX",
     packages=find_packages("."),
-    install_requires=[
-        "circuits",
-        "docker-py"
-    ],
+    install_requires=list(parse_requirements("requirements.txt")),
     entry_points={
         "console_scripts": [
             "autodock=autodock.main:main"
