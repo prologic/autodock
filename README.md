@@ -12,7 +12,7 @@ Either pull the prebuilt [Docker](http://docker.com/) image:
 
 Or install from the development repository:
 
-    $ hg clone https://bitbucket.org/prologic/autodock
+    $ git clone https://github.com/prologic/autodock.git
     $ cd autodock
     $ pip install -r requirements.txt
 

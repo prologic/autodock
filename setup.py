@@ -20,8 +20,8 @@ setup(
     long_description=open("README.rst", "r").read(),
     author="James Mills",
     author_email="James Mills, prologic at shortcircuit dot net dot au",
-    url="https://bitbucket.org/prologic/autodock",
-    download_url="http://bitbucket.org/prologic/autodock/downloads/",
+    url="https://github.com/prologic/autodock",
+    download_url="https://github.com/prologic/autodock/archive/master.zip",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Environment :: Console",
