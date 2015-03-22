@@ -18,6 +18,7 @@ from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 
 from circuits import Component, Debugger
+from jsonrpc_requests import Server as RPCServer
 
 
 from .node import hello, Node
@@ -71,6 +72,7 @@ class Plugin(Component):
             Debugger().register(self)
 
         self.node = Node(*self.bind).register(self)
+        self.rpc = RPCServer("http://{}:{}".format(*self.url))
 
     def ready(self, *args):
         self.node.send(hello(), self.url)

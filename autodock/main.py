@@ -11,6 +11,7 @@ from __future__ import print_function
 
 
 import sys
+from time import time
 from os import environ
 from json import loads
 from threading import Thread
@@ -18,12 +19,31 @@ from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 
 from docker import Client
+from circuits.web import Server, JSONRPC
 from circuits import handler, Component, Debugger
 
 
 from .node import Node
 from .utils import parse_bind
 from .events import docker_event, DOCKER_EVENTS
+
+
+class DockerRPCServer(Component):
+
+    channel = "rpc"
+
+    def init(self, bind, url, channel=channel):
+        self.client = Client(url)
+
+        Server(bind).register(self)
+        JSONRPC(rpc_channel=self.channel).register(self)
+
+    def ping(self, ts):
+        return time() - ts
+
+    def docker(self, method, *args, **kwargs):
+        # TODO: Make this async
+        return getattr(self.client, method)(*args, **kwargs)
 
 
 class DockerEventManager(Thread):
@@ -79,6 +99,7 @@ class App(Component):
 
         bind = parse_bind(args.bind)
 
+        DockerRPCServer(bind, args.url).register(self)
         DockerEventManager(self, args.url).start()
         EventBroadcaster(*bind).register(self)
 
