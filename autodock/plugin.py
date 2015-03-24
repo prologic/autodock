@@ -67,12 +67,13 @@ class Plugin(Component):
         self.bind = parse_bind(self.args.bind)
         self.url = parse_bind(self.args.url)
 
+        self.rpc = RPCServer("http://{}:{}".format(*self.url))
+
     def started(self, *args):
         if self.args.debug:
             Debugger().register(self)
 
         self.node = Node(*self.bind).register(self)
-        self.rpc = RPCServer("http://{}:{}".format(*self.url))
 
     def ready(self, *args):
         self.node.send(hello(), self.url)
