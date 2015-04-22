@@ -6,7 +6,7 @@ autodock is a Daemon for Docker Automation.
 Installation
 ------------
 
-Either pull the prebuilt [Docker](http://docker.com/) image:
+Either pull the automatically updated [Docker](http://docker.com/) image:
 
     $ docker pull prologic/autodock
 
@@ -18,6 +18,10 @@ Or install from the development repository:
 
 Example Usage \#1 -- Logging Docker Events
 ------------------------------------------
+
+> **note**
+>
+> See: [autodock Logger plugin](http://github.com/prologic/autodock-logger)
 
 Start the daemon:
 
@@ -34,7 +38,7 @@ Example Usage \#2 -- Automatic Virtual Hosting with hipache
 
 > **note**
 >
-> This example is still in development.
+> See [autodock Hipache plugin](http://github.com/prologic/autodock-hipache)
 
 Start the daemon:
 
@@ -55,3 +59,7 @@ Now assuming you had `hello.local` configured in your `/etc/hosts` pointing to y
     echo "127.0.0.1 hello.local" >> /etc/hosts
     curl -q -o - http://hello.local/
     Hello World!
+
+> **note**
+>
+> This method of hosting and managing webapps and websites is in production deployments and talked about in more detail in the post [A Docker-based mini-PaaS](http://shortcircuit.net.au/~prologic/blog/article/2015/03/24/a-docker-based-mini-paas/).
