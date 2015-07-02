@@ -3,6 +3,8 @@ autodock
 
 autodock is a Daemon for Docker Automation.
 
+autodock is MIT licensed.
+
 Installation
 ------------
 
