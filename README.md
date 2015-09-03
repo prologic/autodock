@@ -1,7 +1,7 @@
 autodock
 ========
 
-autodock is a Daemon for Docker Automation.
+[autodock](https://github.com/prologic/autodock) is a Daemon for Docker Automation.
 
 autodock is MIT licensed.
 
@@ -18,8 +18,17 @@ Or install from the development repository:
     $ cd autodock
     $ pip install -r requirements.txt
 
-Example Usage \#1 -- Logging Docker Events
-------------------------------------------
+Plugins
+-------
+
+autodock comes with a number of plugins where each piece of functionality is provided by a separate plugin. Each plugin is "linked" to autodock to receive Docker events and issue new Docker API commands. The following list is a list of the currently available plugins for production use:
+
+-   [autodock-cron](https://github.com/prologic/autodock) -- Provides a Cron-like scheduler for Containers
+-   [autodock-logger](https://github.com/prologic/autodock-logger) -- Logs Dockers Events
+-   [autodock-hipache](https://github.com/prologic/autodock-hipache) -- Automatically registers virtualhosts with [hipache](https://github.com/hipache/hipache)
+
+Example \#1 -- Logging Docker Events
+------------------------------------
 
 > **note**
 >
@@ -35,8 +44,8 @@ Link and start an autodock plugin:
 
 Now whenever you start a new container autodock will listen for Docker events. The `autodock-logger` plugin will log all Docker Events received by autodock.
 
-Example Usage \#2 -- Automatic Virtual Hosting with hipache
------------------------------------------------------------
+Example \#2 -- Automatic Virtual Hosting with hipache
+-----------------------------------------------------
 
 > **note**
 >
@@ -65,3 +74,31 @@ Now assuming you had `hello.local` configured in your `/etc/hosts` pointing to y
 > **note**
 >
 > This method of hosting and managing webapps and websites is in production deployments and talked about in more detail in the post [A Docker-based mini-PaaS](http://shortcircuit.net.au/~prologic/blog/article/2015/03/24/a-docker-based-mini-paas/).
+
+Example \#3 -- Cron-like Scheduling of Containers
+-------------------------------------------------
+
+> **note**
+>
+> See [autodock Cron plugin](http://github.com/prologic/autodock-cron)
+
+Start the daemon:
+
+    $ docker run -d --name autodock prologic/autodock
+
+Link and start an autodock plugin:
+
+    $ docker run -d --link autodock prologic/autodock-cron
+
+Now whenever you create a new container autodock will listen for Docker events and discover containers that have been created. The `autodock-cron` plugin will specifically listen for created containers that have a `CRON` environment variable and schedule a job based on the cron expression supplied and re-run that container when its scheduled has triggered.
+
+Start a "Hello" Busybox Container:
+
+    $ docker run -i -t --name hello busybox sh -c "echo Hello"
+
+After about three minutes or so you should see the following in the logs:
+
+    $ docker logs hello
+    Hello
+    Hello
+    Hello
