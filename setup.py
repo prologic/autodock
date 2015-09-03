@@ -9,7 +9,7 @@ from autodock.version import version
 def parse_requirements(filename):
     with open(filename, "r") as f:
         for line in f:
-            if line and line[0] != "#":
+            if line and line[:2] not in ("#", "-e"):
                 yield line.strip()
 
 
