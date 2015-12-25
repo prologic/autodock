@@ -1,6 +1,3 @@
+circuits
 docker-py
 jsonrpc-requests
-
-# circuits
-# Development version of circuits
--e git+https://github.com/circuits/circuits.git#egg=circuits
