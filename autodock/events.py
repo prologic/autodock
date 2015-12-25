@@ -77,6 +77,10 @@ class image_deleted(docker_event):
     """Image Delete Event"""
 
 
+class pull(docker_event):
+    """Pull Event"""
+
+
 DOCKER_EVENTS = {
     u"attach": container_attached,
     u"commit": container_committed,
@@ -94,4 +98,5 @@ DOCKER_EVENTS = {
     u"unpause": container_unpaused,
     u"untag": image_untagged,
     u"delete": image_deleted,
+    u"pull": pull,
 }
