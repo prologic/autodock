@@ -10,6 +10,10 @@
 autodock
 ========
 
+.. image:: https://badge.imagelayers.io/prologic/autodock:latest.svg
+   :target: https://imagelayers.io/?images=prologic/autodock:latest
+   :alt: Image Layers
+
 `autodock`_ is a Daemon for Docker Automation.
 
 autodock is MIT licensed.
