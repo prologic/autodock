@@ -15,6 +15,7 @@ from time import time
 from os import environ
 from json import loads
 from threading import Thread
+from traceback import format_exc
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 
@@ -43,7 +44,10 @@ class DockerRPCServer(Component):
 
     def docker(self, method, *args, **kwargs):
         # TODO: Make this async
-        return getattr(self.client, method)(*args, **kwargs)
+        try:
+            return getattr(self.client, method)(*args, **kwargs)
+        except Exception as e:
+            return {"error": str(e), "traceback": format_exc()}
 
 
 class DockerEventManager(Thread):
