@@ -65,16 +65,22 @@ class DockerEventManager(Thread):
     def run(self):
         for payload in self.client.events():
             event = loads(payload)
-            status = event.pop("status")
-            docker_event = DOCKER_EVENTS.get(status)
-            if docker_event is not None:
-                self.manager.fire(docker_event(**event), "docker")
-            else:
+            try:
+                status = event.pop("status")
+                docker_event = DOCKER_EVENTS.get(status)
+                if docker_event is not None:
+                    self.manager.fire(docker_event(**event), "docker")
+                else:
+                    print(
+                        "WARNING: Unknown Docker Event <{0:s}({1:s})>".format(
+                            status, repr(event)
+                        ),
+                        file=sys.stderr
+                    )
+            except Exception as e:
                 print(
-                    "WARNING: Unknown Docker Event <{0:s}({1:s})>".format(
-                        status, repr(event)
-                    ),
-                    file=sys.stderr
+                    "WARNING: Unknown payload {}".format(repr(event)),
+                    file=sys.stderr,
                 )
 
     def stop(self):
