@@ -6,6 +6,7 @@
 """Utilities"""
 
 
+from os import environ
 from time import sleep
 from functools import partial
 from socket import AF_INET, SOCK_STREAM, socket
@@ -13,6 +14,15 @@ from socket import AF_INET, SOCK_STREAM, socket
 
 def anyof(obj, *types):
     return any(map(partial(isinstance, obj), types))
+
+
+def getenv(*keys, **kwargs):
+    for key in keys:
+        if key in environ:
+            return environ[key]
+    if "default" in kwargs:
+        return kwargs["default"]
+    raise KeyError(key)
 
 
 def parse_bind(s, default_port=1338):

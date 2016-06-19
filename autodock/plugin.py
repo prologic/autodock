@@ -22,7 +22,7 @@ from jsonrpc_requests import Server as RPCServer
 
 
 from .node import hello, Node
-from .utils import parse_bind
+from .utils import getenv, parse_bind
 
 
 def parse_args(parse=True, description=None):
@@ -45,7 +45,7 @@ def parse_args(parse=True, description=None):
 
     parser.add_argument(
         "-u", "--url", action="store", dest="url", metavar="URL", type=str,
-        default=environ.get("URL", environ.get("AUTODOCK_PORT", "udp://127.0.0.1:1338")),
+        default=getenv("URL", "AUTODOCK_PORT", default="udp://autodock:1338"),
         help="autodock Daemon URL"
     )
 
