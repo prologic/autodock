@@ -4,10 +4,13 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"time"
 
 	dockerclient "github.com/docker/docker/client"
 	msgbusclient "github.com/prologic/msgbus/client"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/prologic/msgbus"
 )
 
 const dockerAPIVersion = "1.30"
@@ -15,9 +18,12 @@ const dockerAPIVersion = "1.30"
 // RunFunc ...
 type RunFunc func(ctx Context) error
 
+// HandlerFunc ...
+type HandlerFunc func(id uint64, payload []byte, created time.Time) error
+
 // Context ...
 type Context interface {
-	On(event string, handler msgbusclient.HandlerFunc) *msgbusclient.Subscriber
+	On(event string, handler HandlerFunc)
 	MessageBus() *msgbusclient.Client
 	Docker() *dockerclient.Client
 }
@@ -27,13 +33,21 @@ type pluginContext struct {
 	port   int
 	msgbus *msgbusclient.Client
 	docker *dockerclient.Client
+	topics map[string]*msgbusclient.Subscriber
 }
 
 // On ...
-func (ctx *pluginContext) On(event string, handler msgbusclient.HandlerFunc) *msgbusclient.Subscriber {
-	s := ctx.msgbus.Subscribe(event, nil)
-	go s.Run()
-	return s
+func (ctx *pluginContext) On(event string, handler HandlerFunc) {
+	subscriber := ctx.msgbus.Subscribe(
+		event,
+		func(msg *msgbus.Message) error {
+			return handler(msg.ID, msg.Payload, msg.Created)
+		},
+	)
+
+	ctx.topics[event] = subscriber
+
+	go subscriber.Run()
 }
 
 // MessageBus ...
@@ -98,7 +112,11 @@ func (p *Plugin) init() error {
 		return err
 	}
 
-	p.ctx = &pluginContext{msgbus: msgbus, docker: docker}
+	p.ctx = &pluginContext{
+		msgbus: msgbus,
+		docker: docker,
+		topics: make(map[string]*msgbusclient.Subscriber),
+	}
 
 	return nil
 }
