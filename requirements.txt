@@ -1,3 +1,0 @@
-circuits
-docker-py
-jsonrpc-requests

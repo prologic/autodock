@@ -1,0 +1,21 @@
+version: "3.3"
+
+services:
+  autodock:
+    image: prologic/autodock:go-port
+    command: -debug
+    networks:
+      - autodock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      placement:
+        constraints:
+          - "node.role == manager"
+      restart_policy:
+        condition: on-failure
+      replicas: 1
+
+networks:
+  autodock:
+    driver: overlay

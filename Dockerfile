@@ -1,16 +1,30 @@
-FROM prologic/python-runtime:2.7
+# Build
+FROM golang:alpine AS build
 
-EXPOSE 1338/udp 1338/tcp
+ARG TAG
+ARG BUILD
 
-ENTRYPOINT ["autodock"]
-CMD []
+ENV APP autodock
+ENV REPO prologic/$APP
 
-RUN apk -U add git && \
+RUN apk add --update git make build-base && \
     rm -rf /var/cache/apk/*
 
-COPY requirements.txt /tmp/requirements.txt
-RUN pip install -r /tmp/requirements.txt && rm /tmp/requirements.txt
+WORKDIR /go/src/github.com/$REPO
+COPY . /go/src/github.com/$REPO
+RUN make TAG=$TAG BUILD=$BUILD build
 
-WORKDIR /app
-COPY . /app/
-RUN pip install .
+# Runtime
+FROM scratch
+
+ENV APP autodock
+ENV REPO prologic/$APP
+
+LABEL autodock.app main
+
+COPY --from=build /go/src/github.com/${REPO}/cmd/${APP}/${APP} /${APP}
+
+EXPOSE 8000/tcp
+
+ENTRYPOINT ["/autodock"]
+CMD []

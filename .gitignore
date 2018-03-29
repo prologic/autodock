@@ -1,6 +1,2 @@
-*~
-dist
+*~*
 *.bak
-build
-*.py[co]
-*.egg-info
