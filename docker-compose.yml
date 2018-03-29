@@ -2,8 +2,7 @@ version: "3.3"
 
 services:
   autodock:
-    image: prologic/autodock:go-port
-    command: -debug
+    image: prologic/autodock
     networks:
       - autodock
     volumes:
