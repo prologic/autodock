@@ -79,7 +79,7 @@ func (p *Plugin) init() error {
 	)
 
 	flag.BoolVar(&version, "v", false, "display version information")
-	flag.BoolVar(&debug, "d", false, "enable debug logging")
+	flag.BoolVar(&debug, "debug", false, "enable debug logging")
 
 	flag.StringVar(&host, "host", "localhost", "autodock host to connect to")
 	flag.IntVar(&port, "port", 8000, "autodock port to connect to")
