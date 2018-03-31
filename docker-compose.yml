@@ -15,6 +15,26 @@ services:
         condition: on-failure
       replicas: 1
 
+  cron:
+    image: prologic/autodock-cron
+    command: -host autodock_autodock
+    networks:
+      - autodock
+    deploy:
+      restart_policy:
+        condition: on-failure
+      replicas: 1
+
+  logger:
+    image: prologic/autodock-logger
+    command: -host autodock_autodock
+    networks:
+      - autodock
+    deploy:
+      restart_policy:
+        condition: on-failure
+      replicas: 1
+
 networks:
   autodock:
     driver: overlay
