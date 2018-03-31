@@ -1,11 +1,13 @@
 package plugin
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"os"
 	"time"
 
+	dockertypes "github.com/docker/docker/api/types"
 	dockerclient "github.com/docker/docker/client"
 	msgbusclient "github.com/prologic/msgbus/client"
 	log "github.com/sirupsen/logrus"
@@ -24,8 +26,8 @@ type HandlerFunc func(id uint64, payload []byte, created time.Time) error
 // Context ...
 type Context interface {
 	On(event string, handler HandlerFunc)
-	MessageBus() *msgbusclient.Client
-	Docker() *dockerclient.Client
+	StartContainer(cid string) error
+	GetLabel(cid, key string) (error, string)
 }
 
 type pluginContext struct {
@@ -50,14 +52,32 @@ func (ctx *pluginContext) On(event string, handler HandlerFunc) {
 	go subscriber.Run()
 }
 
-// MessageBus ...
-func (ctx *pluginContext) MessageBus() *msgbusclient.Client {
-	return ctx.msgbus
+// StartContainer ...
+func (ctx *pluginContext) StartContainer(id string) error {
+	return ctx.docker.ContainerStart(
+		context.Background(),
+		id,
+		dockertypes.ContainerStartOptions{},
+	)
 }
 
-// Docker ...
-func (ctx *pluginContext) Docker() *dockerclient.Client {
-	return ctx.docker
+// GetLabel ...
+func (ctx *pluginContext) GetLabel(cid, key string) (err error, val string) {
+	data, err := ctx.docker.ContainerInspect(context.Background(), cid)
+	if err != nil {
+		log.Errorf("error inspecting container: %s", err)
+		return
+	}
+
+	labels := data.Config.Labels
+
+	for k, v := range labels {
+		if k == key {
+			return nil, v
+		}
+	}
+
+	return
 }
 
 // Plugin ...
