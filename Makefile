@@ -15,7 +15,7 @@ dev: build
 deps:
 	@go get ./...
 
-build: clean deps
+build: clean
 	@echo " -> Building $(TAG)$(BUILD)"
 	@cd cmd/$(APP) && go build -tags "netgo static_build" -installsuffix netgo \
 		-ldflags "-w -X github.com/$(REPO)/version.GitCommit=$(COMMIT) -X github.com/$(REPO)/version.Build=$(BUILD)" .
