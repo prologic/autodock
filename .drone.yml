@@ -18,11 +18,20 @@ pipeline:
     image: drillster/drone-email
     host: mail.mills.io
     from: drone@mills.io
-    skip_verify: true 
+    skip_verify: true
+    secrets: [ email_username, email_password ]
     when:
       status: [ success, changed, failure ]
 
+networks:
+  mail_mail:
+    external: true
+
 secrets:
+  email_username:
+    external: true
+  email_password:
+    external: true
   registry_username:
     external: true
   registry_password:
