@@ -26,7 +26,7 @@ image:
 	@echo "Image created: $(REPO):$(TAG)"
 
 test:
-	@go test -v -cover -race $(TEST_ARGS)
+	@go test -v -cover -race $(TEST_ARGS) ./...
 
 clean:
 	@rm -rf $(APP)

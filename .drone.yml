@@ -1,0 +1,29 @@
+workspace:
+  base: /go
+  path: src/github.com/prologic/autodock
+
+pipeline:
+  build:
+    image: golang:latest
+    commands:
+      - make test
+
+  docker:
+    image: plugins/docker
+    repo: r.mills.io/prologic/autodock
+    registry: r.mills.io
+    secrets: [ docker_username, docker_password ]
+
+  notify:
+    image: drillster/drone-email
+    host: mail.mills.io
+    from: drone@mills.io
+    skip_verify: true 
+    when:
+      status: [ success, changed, failure ]
+
+secrets:
+  registry_username:
+    external: true
+  registry_password:
+    external: true
