@@ -1,6 +1,3 @@
-[submodule "vendor/github.com/sirupsen/logrus"]
-	path = vendor/github.com/sirupsen/logrus
-	url = https://github.com/sirupsen/logrus
 [submodule "vendor/golang.org/x/crypto"]
 	path = vendor/golang.org/x/crypto
 	url = https://go.googlesource.com/crypto
@@ -43,3 +40,6 @@
 [submodule "vendor/github.com/prometheus/procfs"]
 	path = vendor/github.com/prometheus/procfs
 	url = https://github.com/prometheus/procfs
+[submodule "vendor/github.com/sirupsen/logrus"]
+	path = vendor/github.com/sirupsen/logrus
+	url = https://github.com/sirupsen/logrus
