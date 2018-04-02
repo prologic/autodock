@@ -4,6 +4,7 @@ package config
 type Config struct {
 	Debug         bool
 	Bind          string
+	MsgBusURL     string
 	DockerURL     string
 	TLSCACert     string
 	TLSCert       string

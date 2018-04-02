@@ -1,37 +1,31 @@
-package server
+package agent
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"strings"
 	"time"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/client"
-	"github.com/prologic/msgbus"
-	"github.com/prometheus/client_golang/prometheus"
-	"golang.org/x/net/context"
-
 	etypes "github.com/docker/docker/api/types/events"
+	dockerclient "github.com/docker/docker/client"
+	msgbusclient "github.com/prologic/msgbus/client"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/docker/docker/api/types"
+	"github.com/prometheus/client_golang/prometheus"
 
 	"github.com/prologic/autodock/config"
 	"github.com/prologic/autodock/events"
 	"github.com/prologic/autodock/metrics"
-	"github.com/prologic/autodock/proxy"
 )
 
-const (
-	defaultPollInterval = time.Millisecond * 2000
-)
-
-type Server struct {
-	cfg           *config.Config
-	client        *client.Client
-	msgbus        *msgbus.MessageBus
-	proxy         *proxy.Proxy
-	metrics       *metrics.Metrics
-	containerHash string
+// Agent ...
+type Agent struct {
+	cfg     *config.Config
+	client  *dockerclient.Client
+	msgbus  *msgbusclient.Client
+	metrics *metrics.Metrics
 }
 
 var (
@@ -42,13 +36,12 @@ var (
 	recoverChan  chan (bool)
 )
 
-// NewServer ...
-func NewServer(cfg *config.Config) (*Server, error) {
-	s := &Server{
-		cfg:           cfg,
-		msgbus:        msgbus.NewMessageBus(&msgbus.Options{}),
-		metrics:       metrics.NewMetrics(),
-		containerHash: "",
+// NewAgent ...
+func NewAgent(cfg *config.Config) (*Agent, error) {
+	s := &Agent{
+		cfg:     cfg,
+		msgbus:  msgbusclient.NewClient(cfg.MsgBusURL, nil),
+		metrics: metrics.NewMetrics(),
 	}
 
 	client, err := s.getDockerClient()
@@ -56,12 +49,6 @@ func NewServer(cfg *config.Config) (*Server, error) {
 		return nil, err
 	}
 	s.client = client
-
-	proxy, err := s.getDockerProxy()
-	if err != nil {
-		return nil, err
-	}
-	s.proxy = proxy
 
 	// channel setup
 	errChan = make(chan error)
@@ -99,6 +86,7 @@ func NewServer(cfg *config.Config) (*Server, error) {
 			}
 		}
 	}()
+
 	// restartChan handler
 	go func() {
 		for range restartChan {
@@ -122,9 +110,7 @@ func NewServer(cfg *config.Config) (*Server, error) {
 			go func(ch <-chan etypes.Message) {
 				for {
 					msg := <-ch
-					m := &events.Message{
-						msg,
-					}
+					m := &events.Message{msg}
 
 					eventChan <- m
 				}
@@ -152,16 +138,19 @@ func NewServer(cfg *config.Config) (*Server, error) {
 				continue
 			}
 
+			topic := string(e.Type)
 			payload, err := json.Marshal(e)
 			if err != nil {
 				log.Errorf("error encoding event: %s", err)
 			} else {
-				topic := s.msgbus.NewTopic(e.Type)
-				s.msgbus.Put(s.msgbus.NewMessage(topic, payload))
+				// FIXME: We're doing a lot of copies here :/ string -> []byte
+				err := s.msgbus.Publish(topic, string(payload))
+				if err != nil {
+					log.Errorf("error publishing event %s: %s", topic, err)
+				} else {
+					s.metrics.EventsProcessed.Inc()
+				}
 			}
-
-			// counter
-			s.metrics.EventsProcessed.Inc()
 		}
 	}()
 
@@ -179,7 +168,7 @@ func NewServer(cfg *config.Config) (*Server, error) {
 	return s, nil
 }
 
-func (s *Server) waitForSwarm() {
+func (s *Agent) waitForSwarm() {
 	log.Debug("waiting for event stream to become ready")
 
 	for {
@@ -195,20 +184,10 @@ func (s *Server) waitForSwarm() {
 }
 
 // Run ...
-func (s *Server) Run() error {
-	http.Handle(
-		"/events/",
-		http.StripPrefix("/events/", s.msgbus),
-	)
-
+func (s *Agent) Run() error {
 	http.Handle(
 		"/metrics",
 		prometheus.Handler(),
-	)
-
-	http.Handle(
-		"/proxy/",
-		http.StripPrefix("/proxy/", s.proxy),
 	)
 
 	if err := http.ListenAndServe(s.cfg.Bind, nil); err != nil {
