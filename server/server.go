@@ -7,6 +7,7 @@ import (
 	"github.com/prologic/msgbus"
 	"github.com/prometheus/client_golang/prometheus"
 
+	"github.com/prologic/autodock/collector"
 	"github.com/prologic/autodock/config"
 	"github.com/prologic/autodock/metrics"
 	"github.com/prologic/autodock/proxy"
@@ -14,10 +15,11 @@ import (
 
 // Server ...
 type Server struct {
-	cfg     *config.Config
-	msgbus  *msgbus.MessageBus
-	proxy   *proxy.Proxy
-	metrics *metrics.Metrics
+	cfg       *config.Config
+	msgbus    *msgbus.MessageBus
+	publisher collector.Publisher
+	proxy     *proxy.Proxy
+	metrics   *metrics.Metrics
 }
 
 // NewServer ...
@@ -37,6 +39,19 @@ func NewServer(cfg *config.Config) (*Server, error) {
 	}()
 
 	return s, nil
+}
+
+// EnableAgent ...
+func (s *Server) EnableAgent() error {
+	if s.cfg.MsgBusURL == "" {
+		s.publisher = collector.NewMessageBusLocalPublisher(s.msgbus)
+	} else {
+		s.publisher = collector.NewMessageBusRemotePublisher(s.cfg.MsgBusURL)
+	}
+
+	collector.NewCollector(s.cfg, s.publisher)
+
+	return nil
 }
 
 // EnableMessageBus ...
