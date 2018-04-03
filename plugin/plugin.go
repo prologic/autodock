@@ -15,7 +15,7 @@ import (
 	"github.com/prologic/msgbus"
 )
 
-const dockerAPIVersion = "1.30"
+const dockerAPIVersion = "1.35"
 
 // RunFunc ...
 type RunFunc func(ctx Context) error
