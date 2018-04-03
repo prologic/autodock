@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	apiVersion       = "1.30"
+	apiVersion       = "1.35"
 	defaultDockerURL = "unix:///var/run/docker.sock"
 )
 
