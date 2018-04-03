@@ -26,7 +26,8 @@ type HandlerFunc func(id uint64, payload []byte, created time.Time) error
 // Context ...
 type Context interface {
 	On(event string, handler HandlerFunc)
-	StartContainer(cid string) error
+	StartContainer(id string) error
+	UpdateService(name string, force bool) error
 	GetLabel(cid, key string) (error, string)
 }
 
@@ -59,6 +60,11 @@ func (ctx *pluginContext) StartContainer(id string) error {
 		id,
 		dockertypes.ContainerStartOptions{},
 	)
+}
+
+// UpdateService ...
+func (ctx *pluginContext) UpdateService(name string, force bool) error {
+	return serviceUpdate(ctx.docker, name, force)
 }
 
 // GetLabel ...
