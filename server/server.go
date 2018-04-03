@@ -41,8 +41,8 @@ func NewServer(cfg *config.Config) (*Server, error) {
 	return s, nil
 }
 
-// EnableAgent ...
-func (s *Server) EnableAgent() error {
+// EnableCollector ...
+func (s *Server) EnableCollector() error {
 	if s.cfg.MsgBusURL == "" {
 		s.publisher = collector.NewMessageBusLocalPublisher(s.msgbus)
 	} else {
