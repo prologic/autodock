@@ -3,7 +3,6 @@
 [![Build Status](https://travis-ci.org/prologic/autodock.svg)](https://travis-ci.org/prologic/autodock)
 [![CodeCov](https://codecov.io/gh/prologic/autodock/branch/master/graph/badge.svg)](https://codecov.io/gh/prologic/autodock)
 [![Go Report Card](https://goreportcard.com/badge/github.com/prologic/autodock)](https://goreportcard.com/report/github.com/prologic/autodock)
-[![Image Layers](https://badge.imagelayers.io/prologic/autodock:latest.svg)](https://imagelayers.io/?images=prologic/autodock:latest)
 [![GoDoc](https://godoc.org/github.com/prologic/autodock?status.svg)](https://godoc.org/github.com/prologic/autodock)
 
 [autodock](https://github.com/prologic/autodock) is a Daemon for
