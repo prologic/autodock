@@ -4,7 +4,7 @@
 [![CodeCov](https://codecov.io/gh/prologic/autodock/branch/master/graph/badge.svg)](https://codecov.io/gh/prologic/autodock)
 [![Go Report Card](https://goreportcard.com/badge/github.com/prologic/autodock)](https://goreportcard.com/report/github.com/prologic/autodock)
 [![GoDoc](https://godoc.org/github.com/prologic/autodock?status.svg)](https://godoc.org/github.com/prologic/autodock)
-[![](https://images.microbadger.com/badges/version/prologic/autodock.svg)](https://microbadger.com/images/prologic/autodock "Get your own version badge on microbadger.com")
+[![](https://images.microbadger.com/badges/image/prologic/autodock.svg)](https://microbadger.com/images/prologic/autodock "Get your own image badge on microbadger.com")
 
 [autodock](https://github.com/prologic/autodock) is a Daemon for
 Docker Automation which enables you to maintain and automate your Docker
