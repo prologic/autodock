@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 	"time"
 
@@ -15,7 +16,9 @@ import (
 	"github.com/prologic/msgbus"
 )
 
-const dockerAPIVersion = "1.35"
+const (
+	apiVersion = "1.35"
+)
 
 // RunFunc ...
 type RunFunc func(ctx Context) error
@@ -27,7 +30,6 @@ type HandlerFunc func(id uint64, payload []byte, created time.Time) error
 type Context interface {
 	On(event string, handler HandlerFunc)
 	StartContainer(id string) error
-	UpdateService(name string, force bool) error
 	GetLabel(cid, key string) (error, string)
 }
 
@@ -50,7 +52,7 @@ func (ctx *pluginContext) On(event string, handler HandlerFunc) {
 
 	ctx.topics[event] = subscriber
 
-	go subscriber.Run()
+	subscriber.Start()
 }
 
 // StartContainer ...
@@ -60,11 +62,6 @@ func (ctx *pluginContext) StartContainer(id string) error {
 		id,
 		dockertypes.ContainerStartOptions{},
 	)
-}
-
-// UpdateService ...
-func (ctx *pluginContext) UpdateService(name string, force bool) error {
-	return serviceUpdate(ctx.docker, name, force)
 }
 
 // GetLabel ...
@@ -128,11 +125,19 @@ func (p *Plugin) init() error {
 		nil,
 	)
 
-	docker, err := dockerclient.NewClientWithOpts(
-		dockerclient.WithHost(
-			fmt.Sprintf("tcp://%s:%d/proxy/", host, port),
-		),
-		dockerclient.WithVersion(dockerAPIVersion),
+	var httpClient *http.Client
+
+	dockerURL := fmt.Sprintf("tcp://%s:%d/proxy/", host, port)
+
+	defaultHeaders := map[string]string{
+		"User-Agent": fmt.Sprintf("autodock-%s", p.Version),
+	}
+
+	docker, err := dockerclient.NewClient(
+		dockerURL,
+		apiVersion,
+		httpClient,
+		defaultHeaders,
 	)
 	if err != nil {
 		return err

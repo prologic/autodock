@@ -1,42 +1,22 @@
-workspace:
-  base: /go
-  path: src/github.com/prologic/autodock
+kind: pipeline
+name: default
 
-pipeline:
-  build:
+steps:
+  - name: build
     image: golang:latest
     commands:
       - make test
 
-  docker:
-    image: plugins/docker
-    repo: r.mills.io/prologic/autodock
-    registry: r.mills.io
-    secrets: [ docker_username, docker_password ]
+  - name: coverage
+    image: plugins/codecov
+    settings:
+      token:
+        from_secret: codecov-token
 
-  notify:
-    image: drillster/drone-email
-    host: mail.mills.io
-    from: drone@mills.io
-    skip_verify: true
-    secrets: [ email_username, email_password ]
-    when:
-      status: [ success, changed, failure ]
-
-  webhook:
+  - name: notify
     image: plugins/webhook
     urls: https://msgbus.mills.io/ci.mills.io
-
-networks:
-  mail_mail:
-    external: true
-
-secrets:
-  email_username:
-    external: true
-  email_password:
-    external: true
-  registry_username:
-    external: true
-  registry_password:
-    external: true
+    when:
+      status:
+        - success
+        - failure

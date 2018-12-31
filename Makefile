@@ -1,4 +1,4 @@
-.PHONY: dev build image test deps clean
+.PHONY: dev build image profile bench test clean
 
 CGO_ENABLED=0
 COMMIT=`git rev-parse --short HEAD`
@@ -12,9 +12,6 @@ all: dev
 dev: build
 	@./cmd/$(APP)/$(APP) -debug
 
-deps:
-	@go get ./...
-
 build: clean
 	@echo " -> Building $(TAG)$(BUILD)"
 	@cd cmd/$(APP) && go build -tags "netgo static_build" -installsuffix netgo \
@@ -25,8 +22,14 @@ image:
 	@docker build --build-arg TAG=$(TAG) --build-arg BUILD=$(BUILD) -t $(REPO):$(TAG) .
 	@echo "Image created: $(REPO):$(TAG)"
 
+profile:
+	@go test -cpuprofile cpu.prof -memprofile mem.prof -v -bench ./...
+
+bench:
+	@go test -v -bench ./...
+
 test:
-	@go test -v -cover -race $(TEST_ARGS) ./...
+	@go test -v -cover -coverprofile=coverage.txt -covermode=atomic -coverpkg=./... -race ./...
 
 clean:
-	@rm -rf $(APP)
+	@git clean -f -d -X

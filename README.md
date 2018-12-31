@@ -1,10 +1,10 @@
- autodock
+# autodock -- Automated Docker
 
-[![Build Status](https://travis-ci.org/prologic/autodock.svg)](https://travis-ci.org/prologic/autodock)
+[![Build Status](https://cloud.drone.io/api/badges/prologic/autodock/status.svg)](https://cloud.drone.io/prologic/autodock)
 [![CodeCov](https://codecov.io/gh/prologic/autodock/branch/master/graph/badge.svg)](https://codecov.io/gh/prologic/autodock)
-[![Go Report Card](https://goreportcard.com/badge/github.com/prologic/autodock)](https://goreportcard.com/report/github.com/prologic/autodock)
-[![GoDoc](https://godoc.org/github.com/prologic/autodock?status.svg)](https://godoc.org/github.com/prologic/autodock)
-[![](https://images.microbadger.com/badges/image/prologic/autodock.svg)](https://microbadger.com/images/prologic/autodock "Get your own image badge on microbadger.com")
+[![Go Report Card](https://goreportcard.com/badge/prologic/autodock)](https://goreportcard.com/report/prologic/autodock)
+[![GoDoc](https://godoc.org/github.com/prologic/autodock?status.svg)](https://godoc.org/github.com/prologic/autodock) 
+[![Sourcegraph](https://sourcegraph.com/github.com/prologic/autodock/-/badge.svg)](https://sourcegraph.com/github.com/prologic/autodock?badge)
 
 [autodock](https://github.com/prologic/autodock) is a Daemon for
 Docker Automation which enables you to maintain and automate your Docker
