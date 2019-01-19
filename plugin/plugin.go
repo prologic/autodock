@@ -2,7 +2,6 @@ package plugin
 
 import (
 	"context"
-	"flag"
 	"fmt"
 	"net/http"
 	"os"
@@ -10,10 +9,10 @@ import (
 
 	dockertypes "github.com/docker/docker/api/types"
 	dockerclient "github.com/docker/docker/client"
+	"github.com/prologic/msgbus"
 	msgbusclient "github.com/prologic/msgbus/client"
 	log "github.com/sirupsen/logrus"
-
-	"github.com/prologic/msgbus"
+	flag "github.com/spf13/pflag"
 )
 
 const (
@@ -101,11 +100,11 @@ func (p *Plugin) init() error {
 		port    int
 	)
 
-	flag.BoolVar(&version, "v", false, "display version information")
-	flag.BoolVar(&debug, "debug", false, "enable debug logging")
+	flag.BoolVarP(&version, "version", "v", false, "display version information")
+	flag.BoolVarP(&debug, "debug", "d", false, "enable debug logging")
 
-	flag.StringVar(&host, "host", "localhost", "autodock host to connect to")
-	flag.IntVar(&port, "port", 8000, "autodock port to connect to")
+	flag.StringVarP(&host, "host", "h", "localhost", "autodock host to connect to")
+	flag.IntVarP(&port, "port", "p", 8000, "autodock port to connect to")
 
 	flag.Parse()
 
