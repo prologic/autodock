@@ -8,58 +8,45 @@ import (
 
 	pkgver "github.com/prologic/autodock/version"
 
-	"github.com/namsral/flag"
 	"github.com/prologic/autodock/config"
 	"github.com/prologic/autodock/server"
+	flag "github.com/spf13/pflag"
 )
 
-func main() {
-	var (
-		dockerurl string
-		msgbusurl string
+var (
+	dockerurl string
+	msgbusurl string
 
-		tlsverify bool
-		tlscacert string
-		tlscert   string
-		tlskey    string
-		tls       bool
+	tlsverify bool
+	tlscacert string
+	tlscert   string
+	tlskey    string
+	tls       bool
 
-		debug   bool
-		version bool
+	debug   bool
+	version bool
 
-		bind string
-	)
+	bind string
+)
 
-	flag.String(flag.DefaultConfigFlagname, "", "path to config file")
-	flag.BoolVar(&debug, "debug", false, "enable debug logging")
-	flag.BoolVar(&version, "v", false, "display version information")
+func init() {
+	flag.StringP("config", "c", "", "path to config file")
+	flag.BoolVarP(&debug, "debug", "d", false, "enable debug logging")
+	flag.BoolVarP(&version, "version", "v", false, "display version information")
 
-	flag.StringVar(
-		&bind, "bind", "0.0.0.0:8000",
-		"[int]:<port> to bind to for HTTP",
-	)
+	flag.StringVarP(&bind, "bind", "b", "0.0.0.0:8000", "[int]:<port> to bind to for HTTP")
 
-	flag.StringVar(&dockerurl, "dockerurl", "", "Docker URL to connect to")
-	flag.StringVar(&msgbusurl, "msgbusurl", "", "MessageBus URL to connect to")
+	flag.StringVar(&dockerurl, "docker-url", "", "Docker URL to connect to")
+	flag.StringVar(&msgbusurl, "msgbus-url", "", "MessageBus URL to connect to")
 
 	flag.BoolVar(&tls, "tls", false, "Use TLS; implied by --tlsverify")
-	flag.StringVar(
-		&tlscacert, "tlscacert", "",
-		"Trust certs signed only by this CA",
-	)
-	flag.StringVar(
-		&tlscert, "tlscert", "",
-		"Path to TLS certificate file",
-	)
-	flag.StringVar(
-		&tlskey, "tlskey", "",
-		"Path to TLS key file",
-	)
-	flag.BoolVar(
-		&tlsverify, "tlsverify", true,
-		"Use TLS and verify the remote",
-	)
+	flag.StringVar(&tlscacert, "tls-ca-cert", "", "Trust certs signed only by this CA")
+	flag.StringVar(&tlscert, "tls-cert", "", "Path to TLS certificate file")
+	flag.StringVar(&tlskey, "tls-key", "", "Path to TLS key file")
+	flag.BoolVar(&tlsverify, "tls-verify", true, "Use TLS and verify the remote")
+}
 
+func main() {
 	flag.Parse()
 
 	if version {

@@ -1,26 +1,24 @@
-.PHONY: dev build image profile bench test clean
+.PHONY: dev build install image profile bench test clean
 
 CGO_ENABLED=0
-COMMIT=`git rev-parse --short HEAD`
-APP=autodock
-REPO?=prologic/$(APP)
-TAG?=latest
-BUILD?=-dev
+COMMIT=$(shell git rev-parse --short HEAD)
 
 all: dev
 
 dev: build
-	@./cmd/$(APP)/$(APP) -debug
+	@./autodock -d
 
 build: clean
-	@echo " -> Building $(TAG)$(BUILD)"
-	@cd cmd/$(APP) && go build -tags "netgo static_build" -installsuffix netgo \
-		-ldflags "-w -X github.com/$(REPO)/version.GitCommit=$(COMMIT) -X github.com/$(REPO)/version.Build=$(BUILD)" .
-	@echo "Built $$(./cmd/$(APP)/$(APP) -v)"
+	@go build \
+		-tags "netgo static_build" -installsuffix netgo \
+		-ldflags "-w -X $(shell go list)/version/.GitCommit=$(COMMIT)" \
+		.
+
+install: build
+	@go install
 
 image:
-	@docker build --build-arg TAG=$(TAG) --build-arg BUILD=$(BUILD) -t $(REPO):$(TAG) .
-	@echo "Image created: $(REPO):$(TAG)"
+	@docker build -t prologic/autodock .
 
 profile:
 	@go test -cpuprofile cpu.prof -memprofile mem.prof -v -bench ./...

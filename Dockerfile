@@ -1,28 +1,16 @@
 # Build
 FROM golang:alpine AS build
 
-ARG TAG
-ARG BUILD
+RUN apk add --no-cache -U git make build-base
 
-ENV APP autodock
-ENV REPO prologic/$APP
-
-RUN apk add --update git make build-base && \
-    rm -rf /var/cache/apk/*
-
-WORKDIR /go/src/github.com/$REPO
-COPY . /go/src/github.com/$REPO
-RUN make TAG=$TAG BUILD=$BUILD build
+WORKDIR /src/autodock
+COPY . /src/autodock
+RUN make install
 
 # Runtime
-FROM scratch
+FROM alpine:latest
 
-ENV APP autodock
-ENV REPO prologic/$APP
-
-LABEL autodock.app main
-
-COPY --from=build /go/src/github.com/${REPO}/cmd/${APP}/${APP} /${APP}
+COPY --from=build /go/bin/autodock /autodock
 
 EXPOSE 8000/tcp
 
