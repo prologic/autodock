@@ -74,7 +74,7 @@ func (u UNIXTransport) RoundTrip(req *http.Request) (res *http.Response, err err
 	}
 
 	method := req.Method
-	uri := fmt.Sprintf("http://%s/%s", req.Host, req.URL.Path)
+	uri := fmt.Sprintf("http://%s/%s?%s", req.Host, req.URL.Path, req.URL.RawQuery)
 	body := req.Body
 
 	r, err := http.NewRequest(method, uri, body)
