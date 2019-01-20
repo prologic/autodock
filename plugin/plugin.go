@@ -28,6 +28,7 @@ type HandlerFunc func(id uint64, payload []byte, created time.Time) error
 // Context ...
 type Context interface {
 	On(event string, handler HandlerFunc)
+	Docker() *dockerclient.Client
 	StartContainer(id string) error
 	GetLabel(cid, key string) (error, string)
 }
@@ -52,6 +53,11 @@ func (ctx *pluginContext) On(event string, handler HandlerFunc) {
 	ctx.topics[event] = subscriber
 
 	subscriber.Start()
+}
+
+// Docker ...
+func (ctx *pluginContext) Docker() *dockerclient.Client {
+	return ctx.docker
 }
 
 // StartContainer ...
