@@ -1,11 +1,13 @@
 package server
 
 import (
+	"log"
 	"net/http"
 	"time"
 
 	"github.com/prologic/msgbus"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/unrolled/logger"
 
 	"github.com/prologic/autodock/collector"
 	"github.com/prologic/autodock/config"
@@ -76,5 +78,13 @@ func (s *Server) EnableProxy() error {
 func (s *Server) Run() error {
 	http.Handle("/metrics", prometheus.Handler())
 
-	return http.ListenAndServe(s.cfg.Bind, nil)
+	loggerMiddleware := logger.New(logger.Options{
+		Prefix:               "autodock",
+		RemoteAddressHeaders: []string{"X-Forwarded-For"},
+		OutputFlags:          log.LstdFlags,
+	})
+
+	app := loggerMiddleware.Handler(http.DefaultServeMux)
+
+	return http.ListenAndServe(s.cfg.Bind, app)
 }
