@@ -132,7 +132,7 @@ func (p *Plugin) init() error {
 
 	var httpClient *http.Client
 
-	dockerURL := fmt.Sprintf("tcp://%s:%d/proxy/", host, port)
+	dockerURL := fmt.Sprintf("tcp://%s:%d/proxy", host, port)
 
 	defaultHeaders := map[string]string{
 		"User-Agent": fmt.Sprintf("autodock-%s", p.Version),
