@@ -23,7 +23,7 @@ webhooks to support things like CI/CD.
 
 The following list is a list of the currently available plugins:
 
-- [autodock-cron](https://github.com/prologic/autodock)
+- [autodock-cron](https://github.com/prologic/autodock-cron)
   Provides a *Cron* like scheduler for Containers/Services
 - [autodock-logger](https://github.com/prologic/autodock-logger)
   Logs Dockers Events (*Reference Implementation*)
